@@ -1,0 +1,53 @@
+# AI-Team-TMUX Generated Files
+.ai-team-tmux/
+*.log
+*.txt
+recordings/
+sessions/
+snapshots/
+
+# Temporary files
+*.tmp
+*.swp
+*.swo
+*~
+.DS_Store
+
+# IDE files
+.vscode/
+.idea/
+*.sublime-*
+
+# Cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Test outputs
+test_output/
+test_results/
+
+# Personal configuration
+.env
+.env.local
+config.local.yaml
+
+# Session recordings
+session_*.txt
+snapshot_*/
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.Spotlight-V100
+.Trashes
+
+# AI-Team-Tmux legacy files (if any)
+.ai-team-tmux-legacy/

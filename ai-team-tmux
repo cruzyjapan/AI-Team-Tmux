@@ -146,19 +146,19 @@ create_and_start() {
     # Create session with first available AI
     case "${available_ais[0]}" in
         claude)
-            tmux new-session -d -s "$SESSION_NAME" "echo -e '\033[38;5;82m🤖 Claude AI Ready\033[0m' && export PS1='\[\033[38;5;82m\]claude> \[\033[0m\]' && claude"
+            tmux new-session -d -s "$SESSION_NAME" -c "$PWD" bash -c "echo -e '\033[38;5;82m🤖 Claude AI Ready\033[0m' && claude"
             tmux select-pane -t "$SESSION_NAME:0.0" -T "🤖 Claude"
             ;;
         cursor)
-            tmux new-session -d -s "$SESSION_NAME" "echo -e '\033[38;5;39m🖱️ Cursor AI Ready\033[0m' && export PS1='\[\033[38;5;39m\]cursor> \[\033[0m\]' && cursor-agent"
+            tmux new-session -d -s "$SESSION_NAME" -c "$PWD" bash -c "echo -e '\033[38;5;39m🖱️ Cursor AI Ready\033[0m' && cursor-agent"
             tmux select-pane -t "$SESSION_NAME:0.0" -T "🖱️ Cursor"
             ;;
         codex)
-            tmux new-session -d -s "$SESSION_NAME" "echo -e '\033[38;5;141m🔧 Codex AI Ready\033[0m' && export PS1='\[\033[38;5;141m\]codex> \[\033[0m\]' && codex"
+            tmux new-session -d -s "$SESSION_NAME" -c "$PWD" bash -c "echo -e '\033[38;5;141m🔧 Codex AI Ready\033[0m' && codex"
             tmux select-pane -t "$SESSION_NAME:0.0" -T "🔧 Codex"
             ;;
         gemini)
-            tmux new-session -d -s "$SESSION_NAME" "echo -e '\033[38;5;214m✨ Gemini AI Ready\033[0m' && export PS1='\[\033[38;5;214m\]gemini> \[\033[0m\]' && gemini"
+            tmux new-session -d -s "$SESSION_NAME" -c "$PWD" bash -c "echo -e '\033[38;5;214m✨ Gemini AI Ready\033[0m' && gemini"
             tmux select-pane -t "$SESSION_NAME:0.0" -T "✨ Gemini"
             ;;
     esac
@@ -185,16 +185,16 @@ create_and_start() {
         
         case "$ai" in
             claude)
-                tmux split-window $split_opts "echo -e '\033[38;5;82m🤖 Claude AI Ready\033[0m' && export PS1='\[\033[38;5;82m\]claude> \[\033[0m\]' && claude"
+                tmux split-window $split_opts -c "$PWD" bash -c "echo -e '\033[38;5;82m🤖 Claude AI Ready\033[0m' && claude"
                 ;;
             cursor)
-                tmux split-window $split_opts "echo -e '\033[38;5;39m🖱️ Cursor AI Ready\033[0m' && export PS1='\[\033[38;5;39m\]cursor> \[\033[0m\]' && cursor-agent"
+                tmux split-window $split_opts -c "$PWD" bash -c "echo -e '\033[38;5;39m🖱️ Cursor AI Ready\033[0m' && cursor-agent"
                 ;;
             codex)
-                tmux split-window $split_opts "echo -e '\033[38;5;141m🔧 Codex AI Ready\033[0m' && export PS1='\[\033[38;5;141m\]codex> \[\033[0m\]' && codex"
+                tmux split-window $split_opts -c "$PWD" bash -c "echo -e '\033[38;5;141m🔧 Codex AI Ready\033[0m' && codex"
                 ;;
             gemini)
-                tmux split-window $split_opts "echo -e '\033[38;5;214m✨ Gemini AI Ready\033[0m' && export PS1='\[\033[38;5;214m\]gemini> \[\033[0m\]' && gemini"
+                tmux split-window $split_opts -c "$PWD" bash -c "echo -e '\033[38;5;214m✨ Gemini AI Ready\033[0m' && gemini"
                 ;;
         esac
     done

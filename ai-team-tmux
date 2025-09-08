@@ -200,7 +200,7 @@ create_and_start() {
     done
     
     # Small delay to ensure all panes are created
-    sleep 0.3
+    sleep 0.5
     
     # Set pane titles after all panes are created
     # Pane order after splits depends on how tmux renumbers them
@@ -209,38 +209,43 @@ create_and_start() {
         # For 4 AIs, after the splits the panes are:
         # 0: top-left (first AI), 1: bottom-left (fourth AI), 
         # 2: top-right (second AI), 3: bottom-right (third AI)
-        tmux select-pane -t "$SESSION_NAME:0.0" -T "$(
-            case "${available_ais[0]}" in
-                claude) echo "🤖 Claude" ;;
-                cursor) echo "🖱️ Cursor" ;;
-                codex) echo "🔧 Codex" ;;
-                gemini) echo "✨ Gemini" ;;
-            esac
-        )"
-        tmux select-pane -t "$SESSION_NAME:0.2" -T "$(
-            case "${available_ais[1]}" in
-                claude) echo "🤖 Claude" ;;
-                cursor) echo "🖱️ Cursor" ;;
-                codex) echo "🔧 Codex" ;;
-                gemini) echo "✨ Gemini" ;;
-            esac
-        )"
-        tmux select-pane -t "$SESSION_NAME:0.3" -T "$(
-            case "${available_ais[2]}" in
-                claude) echo "🤖 Claude" ;;
-                cursor) echo "🖱️ Cursor" ;;
-                codex) echo "🔧 Codex" ;;
-                gemini) echo "✨ Gemini" ;;
-            esac
-        )"
-        tmux select-pane -t "$SESSION_NAME:0.1" -T "$(
-            case "${available_ais[3]}" in
-                claude) echo "🤖 Claude" ;;
-                cursor) echo "🖱️ Cursor" ;;
-                codex) echo "🔧 Codex" ;;
-                gemini) echo "✨ Gemini" ;;
-            esac
-        )"
+        
+        # Set titles based on available_ais array order
+        local title0 title1 title2 title3
+        
+        case "${available_ais[0]}" in
+            claude) title0="🤖 Claude" ;;
+            cursor) title0="🖱️ Cursor" ;;
+            codex) title0="🔧 Codex" ;;
+            gemini) title0="✨ Gemini" ;;
+        esac
+        
+        case "${available_ais[1]}" in
+            claude) title1="🤖 Claude" ;;
+            cursor) title1="🖱️ Cursor" ;;
+            codex) title1="🔧 Codex" ;;
+            gemini) title1="✨ Gemini" ;;
+        esac
+        
+        case "${available_ais[2]}" in
+            claude) title2="🤖 Claude" ;;
+            cursor) title2="🖱️ Cursor" ;;
+            codex) title2="🔧 Codex" ;;
+            gemini) title2="✨ Gemini" ;;
+        esac
+        
+        case "${available_ais[3]}" in
+            claude) title3="🤖 Claude" ;;
+            cursor) title3="🖱️ Cursor" ;;
+            codex) title3="🔧 Codex" ;;
+            gemini) title3="✨ Gemini" ;;
+        esac
+        
+        # Apply titles to correct pane positions
+        tmux select-pane -t "$SESSION_NAME:0.0" -T "$title0"  # First AI -> top-left
+        tmux select-pane -t "$SESSION_NAME:0.2" -T "$title1"  # Second AI -> top-right
+        tmux select-pane -t "$SESSION_NAME:0.3" -T "$title2"  # Third AI -> bottom-right
+        tmux select-pane -t "$SESSION_NAME:0.1" -T "$title3"  # Fourth AI -> bottom-left
     else
         # For other numbers of AIs, set titles in order
         local pane_index=0

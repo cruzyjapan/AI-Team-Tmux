@@ -146,19 +146,19 @@ create_and_start() {
     # Create session with first available AI
     case "${available_ais[0]}" in
         claude)
-            tmux new-session -d -s "$SESSION_NAME" -c "$PWD" bash -c "echo -e '\033[38;5;82m🤖 Claude AI Ready\033[0m' && claude"
+            tmux new-session -d -s "$SESSION_NAME" -c "$PWD" "bash -c 'echo -e \"\033[38;5;82m🤖 Claude AI Ready\033[0m\" && exec claude'"
             tmux select-pane -t "$SESSION_NAME:0.0" -T "🤖 Claude"
             ;;
         cursor)
-            tmux new-session -d -s "$SESSION_NAME" -c "$PWD" bash -c "echo -e '\033[38;5;39m🖱️ Cursor AI Ready\033[0m' && cursor-agent"
+            tmux new-session -d -s "$SESSION_NAME" -c "$PWD" "bash -c 'echo -e \"\033[38;5;39m🖱️ Cursor AI Ready\033[0m\" && exec cursor-agent'"
             tmux select-pane -t "$SESSION_NAME:0.0" -T "🖱️ Cursor"
             ;;
         codex)
-            tmux new-session -d -s "$SESSION_NAME" -c "$PWD" bash -c "echo -e '\033[38;5;141m🔧 Codex AI Ready\033[0m' && codex"
+            tmux new-session -d -s "$SESSION_NAME" -c "$PWD" "bash -c 'echo -e \"\033[38;5;141m🔧 Codex AI Ready\033[0m\" && exec codex'"
             tmux select-pane -t "$SESSION_NAME:0.0" -T "🔧 Codex"
             ;;
         gemini)
-            tmux new-session -d -s "$SESSION_NAME" -c "$PWD" bash -c "echo -e '\033[38;5;214m✨ Gemini AI Ready\033[0m' && gemini"
+            tmux new-session -d -s "$SESSION_NAME" -c "$PWD" "bash -c 'echo -e \"\033[38;5;214m✨ Gemini AI Ready\033[0m\" && exec gemini'"
             tmux select-pane -t "$SESSION_NAME:0.0" -T "✨ Gemini"
             ;;
     esac
@@ -185,31 +185,29 @@ create_and_start() {
         
         case "$ai" in
             claude)
-                tmux split-window $split_opts -c "$PWD" bash -c "echo -e '\033[38;5;82m🤖 Claude AI Ready\033[0m' && claude"
+                tmux split-window $split_opts -c "$PWD" "bash -c 'echo -e \"\033[38;5;82m🤖 Claude AI Ready\033[0m\" && exec claude'"
+                tmux select-pane -t "$SESSION_NAME:0.$i" -T "🤖 Claude"
                 ;;
             cursor)
-                tmux split-window $split_opts -c "$PWD" bash -c "echo -e '\033[38;5;39m🖱️ Cursor AI Ready\033[0m' && cursor-agent"
+                tmux split-window $split_opts -c "$PWD" "bash -c 'echo -e \"\033[38;5;39m🖱️ Cursor AI Ready\033[0m\" && exec cursor-agent'"
+                tmux select-pane -t "$SESSION_NAME:0.$i" -T "🖱️ Cursor"
                 ;;
             codex)
-                tmux split-window $split_opts -c "$PWD" bash -c "echo -e '\033[38;5;141m🔧 Codex AI Ready\033[0m' && codex"
+                tmux split-window $split_opts -c "$PWD" "bash -c 'echo -e \"\033[38;5;141m🔧 Codex AI Ready\033[0m\" && exec codex'"
+                tmux select-pane -t "$SESSION_NAME:0.$i" -T "🔧 Codex"
                 ;;
             gemini)
-                tmux split-window $split_opts -c "$PWD" bash -c "echo -e '\033[38;5;214m✨ Gemini AI Ready\033[0m' && gemini"
+                tmux split-window $split_opts -c "$PWD" "bash -c 'echo -e \"\033[38;5;214m✨ Gemini AI Ready\033[0m\" && exec gemini'"
+                tmux select-pane -t "$SESSION_NAME:0.$i" -T "✨ Gemini"
                 ;;
         esac
     done
     
-    # Update pane titles based on what's actually available
-    local pane_num=0
-    for ai in "${available_ais[@]}"; do
-        case "$ai" in
-            claude) tmux select-pane -t "$SESSION_NAME:0.$pane_num" -T "🤖 Claude" ;;
-            cursor) tmux select-pane -t "$SESSION_NAME:0.$pane_num" -T "🖱️ Cursor" ;;
-            codex) tmux select-pane -t "$SESSION_NAME:0.$pane_num" -T "🔧 Codex" ;;
-            gemini) tmux select-pane -t "$SESSION_NAME:0.$pane_num" -T "✨ Gemini" ;;
-        esac
-        ((pane_num++))
-    done
+    # Small delay to ensure panes are created
+    sleep 0.3
+    
+    # Set the first pane as active for input
+    tmux select-pane -t "$SESSION_NAME:0.0"
 }
 
 # Setup tmux styling
@@ -220,15 +218,33 @@ setup_tmux_style() {
     
     # Window-specific settings for pane borders
     tmux set-window-option -t "$SESSION_NAME:0" pane-border-status top
-    tmux set-window-option -t "$SESSION_NAME:0" pane-border-format "#{pane_title}"
+    tmux set-window-option -t "$SESSION_NAME:0" pane-border-format ' #{pane_title} '
     
     # Set pane border colors
     tmux set-option -g pane-border-style 'fg=colour237'
-    tmux set-option -g pane-active-border-style 'fg=colour39'
+    tmux set-option -g pane-active-border-style 'fg=colour39,bold'
     
     # Set status bar
     tmux set-option -g status-left "[AI-Team] "
     tmux set-option -g status-right " #S | %H:%M "
+    
+    # Enable focus events for better pane switching
+    tmux set-option -g focus-events on
+    
+    # Set default terminal for better color support
+    tmux set-option -g default-terminal "screen-256color"
+    
+    # Allow selecting panes with arrow keys
+    tmux bind-key -n M-Left select-pane -L
+    tmux bind-key -n M-Right select-pane -R
+    tmux bind-key -n M-Up select-pane -U
+    tmux bind-key -n M-Down select-pane -D
+    
+    # Allow resizing panes with Shift+arrow keys
+    tmux bind-key -n S-Left resize-pane -L 2
+    tmux bind-key -n S-Right resize-pane -R 2
+    tmux bind-key -n S-Up resize-pane -U 2
+    tmux bind-key -n S-Down resize-pane -D 2
 }
 
 # Show help
@@ -300,6 +316,7 @@ main() {
     
     echo "Session created. Attaching..."
     echo "Use 'Ctrl-b d' to detach, 'Ctrl-b ?' for help"
+    echo "Navigate panes: Alt+Arrow keys | Resize panes: Shift+Arrow keys"
     
     # Small delay before attaching
     sleep 1

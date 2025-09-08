@@ -216,9 +216,9 @@ setup_tmux_style() {
     tmux set-option -g mouse on
     tmux set-option -g status-style 'bg=colour234,fg=colour255'
     
-    # Window-specific settings for pane borders
-    tmux set-window-option -t "$SESSION_NAME:0" pane-border-status top
-    tmux set-window-option -t "$SESSION_NAME:0" pane-border-format ' #{pane_title} '
+    # Pane border settings - set globally to ensure visibility
+    tmux set-option -g pane-border-status top
+    tmux set-option -g pane-border-format ' #{pane_title} '
     
     # Set pane border colors
     tmux set-option -g pane-border-style 'fg=colour237'
